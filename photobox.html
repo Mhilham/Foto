@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Photobox Virtual</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+    }
+    video, canvas {
+      border: 2px solid #333;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      margin-bottom: 10px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Photobox Virtual</h1>
+  <video id="video" autoplay playsinline></video>
+  <br>
+  <button onclick="takePhoto()">Ambil Foto</button>
+  <canvas id="canvas" style="display:none;"></canvas>
+  <br>
+  <a id="download" style="display:none;" download="photo.png">Simpan Foto</a>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const download = document.getElementById('download');
+    const context = canvas.getContext('2d');
+
+    // Minta akses ke kamera
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => {
+        alert("Gagal mengakses kamera: " + err.message);
+      });
+
+    function takePhoto() {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'block';
+      const dataURL = canvas.toDataURL('image/png');
+      download.href = dataURL;
+      download.style.display = 'inline-block';
+      download.textContent = 'Simpan Foto';
+    }
+  </script>
+</body>
+</html>
