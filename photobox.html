@@ -3,58 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <title>Photobox Virtual</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       text-align: center;
       font-family: sans-serif;
+      padding: 20px;
     }
     video, canvas {
-      border: 2px solid #333;
-      border-radius: 12px;
-      width: 90%;
+      width: 100%;
       max-width: 400px;
+      border-radius: 12px;
       margin-bottom: 10px;
     }
-    button {
-      margin: 5px;
+    button, a {
+      margin: 10px 5px;
       padding: 10px 20px;
       font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007BFF;
+      color: white;
+    }
+    a {
+      text-decoration: none;
+      display: inline-block;
     }
   </style>
 </head>
 <body>
-  <h1>Photobox Virtual</h1>
+  <h2>Photobox Virtual</h2>
   <video id="video" autoplay playsinline></video>
   <br>
   <button onclick="takePhoto()">Ambil Foto</button>
   <canvas id="canvas" style="display:none;"></canvas>
   <br>
-  <a id="download" style="display:none;" download="photo.png">Simpan Foto</a>
+  <a id="download" style="display:none;" download="foto.png">Simpan Foto</a>
 
   <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const download = document.getElementById('download');
-    const context = canvas.getContext('2d');
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const download = document.getElementById("download");
+    const context = canvas.getContext("2d");
 
     // Minta akses ke kamera
-    navigator.mediaDevices.getUserMedia({ video: true })
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
       .then(stream => {
         video.srcObject = stream;
       })
-      .catch(err => {
-        alert("Gagal mengakses kamera: " + err.message);
+      .catch(error => {
+        alert("Tidak bisa akses kamera: " + error.message);
       });
 
     function takePhoto() {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      canvas.style.display = 'block';
-      const dataURL = canvas.toDataURL('image/png');
+      context.drawImage(video, 0, 0);
+      canvas.style.display = "block";
+
+      // Simpan gambar
+      const dataURL = canvas.toDataURL("image/png");
       download.href = dataURL;
-      download.style.display = 'inline-block';
-      download.textContent = 'Simpan Foto';
+      download.style.display = "inline-block";
     }
   </script>
 </body>
